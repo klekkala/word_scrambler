@@ -1,3 +1,11 @@
+/**
+* Wordfind.js 0.0.1
+* (c) 2012 Bill, BunKat LLC.
+* Wordfind is freely distributable under the MIT license.
+* For all details and documentation:
+*     http://github.com/bunkat/wordfind
+*/
+
 (function (document, $, wordfind) {
 
   'use strict';
@@ -109,6 +117,8 @@
         return;
       }
 
+      // see if the user backed up and correct the selectedSquares state if
+      // they did
       var backTo;
       for (var i = 0, len = selectedSquares.length; i < len; i++) {
         if (selectedSquares[i] == target) {
@@ -123,6 +133,9 @@
         curWord = curWord.substr(0, curWord.length-1);
       }
 
+
+      // see if this is just a new orientation from the first square
+      // this is needed to make selecting diagonal words easier
       var newOrientation = calcOrientation(
           $(startSquare).attr('x')-0,
           $(startSquare).attr('y')-0,
@@ -140,7 +153,7 @@
         curOrientation = newOrientation;
       }
 
-
+      // see if the move is along the same orientation as the last move
       var orientation = calcOrientation(
           $(lastSquare).attr('x')-0,
           $(lastSquare).attr('y')-0,
@@ -148,10 +161,14 @@
           $(target).attr('y')-0
           );
 
+      // if the new square isn't along a valid orientation, just ignore it.
+      // this makes selecting diagonal words less frustrating
       if (!orientation) {
         return;
       }
 
+      // finally, if there was no previous orientation or this move is along
+      // the same orientation as the last move then play the move
       if (!curOrientation || curOrientation === orientation) {
         curOrientation = orientation;
         playTurn(target);
@@ -170,6 +187,11 @@
       select(this);
     };
 
+    /**
+    * Updates the game state when the previous selection was valid.
+    *
+    * @param {el} square: The jQuery element that was played
+    */
     var playTurn = function (square) {
 
       // make sure we are still forming a valid word
@@ -183,7 +205,12 @@
       }
     };
 
-  
+    /**
+    * Event that handles mouse up on a square. Checks to see if a valid word
+    * was created and updates the class of the letters and word if it was. Then
+    * resets the game state to start a new word.
+    *
+    */
     var endTurn = function () {
 
       // see if we formed a valid word
@@ -208,6 +235,15 @@
       curOrientation = null;
     };
 
+    /**
+    * Given two points, ensure that they are adjacent and determine what
+    * orientation the second point is relative to the first
+    *
+    * @param {int} x1: The x coordinate of the first point
+    * @param {int} y1: The y coordinate of the first point
+    * @param {int} x2: The x coordinate of the second point
+    * @param {int} y2: The y coordinate of the second point
+    */
     var calcOrientation = function (x1, y1, x2, y2) {
 
       for (var orientation in wordfind.orientations) {
@@ -224,7 +260,16 @@
 
     return {
 
-
+      /**
+      * Creates a new word find game and draws the board and words.
+      *
+      * Returns the puzzle that was created.
+      *
+      * @param {[String]} words: The words to add to the puzzle
+      * @param {String} puzzleEl: Selector to use when inserting the puzzle
+      * @param {String} wordsEl: Selector to use when inserting the word list
+      * @param {Options} options: WordFind options to use when creating the puzzle
+      */
       create: function(words, puzzleEl, wordsEl, options) {
         
         wordList = words.slice(0).sort();
@@ -254,6 +299,12 @@
         return puzzle;
       },
 
+      /**
+      * Solves an existing puzzle.
+      *
+      * @param {[[String]]} puzzle: The puzzle to solve
+      * @param {[String]} words: The words to solve for
+      */
       solve: function(puzzle, words) {
 
         var solution = wordfind.solve(puzzle, words).found;
@@ -279,6 +330,10 @@
     };
   };
 
+
+  /**
+  * Allow game to be used within the browser
+  */
   window.wordfindgame = WordFindGame();
 
 }(document, jQuery, wordfind));
