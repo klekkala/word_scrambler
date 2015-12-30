@@ -12,7 +12,7 @@
 <div><button id='solve'>Solve the Puzzle</button></div>
 
 <script language="javascript" type="text/javascript" src="jquery.min.js"></script> 
-<script type="text/javascript" src="lib/wordfind.js"></script> 
+<script type="text/javascript" src="wordfind.js"></script> 
 <script type="text/javascript" src="wordfindgame.js"></script> 
 <script>
 
